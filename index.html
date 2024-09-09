@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spin Wheel</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            flex-direction: column;
+            background-color: #34495e;
+        }
+
+        video#bgvid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1; /* Send the video to the background */
+        }
+
+        h1 {
+            color: #fff;
+            font-family: 'Lucida Handwriting', sans-serif;
+            font-weight: bold;
+            margin-bottom: 2vh;
+            z-index: 1; /* Keep the text above the video */
+            text-align: center;
+            font-size: 5vw; /* Responsive font size */
+        }
+
+        .container {
+            width: 80vw;
+            max-width: 500px;
+            height: 80vw;
+            max-height: 500px;
+            position: relative;
+            border-radius: 50%;
+            border: 1.5vw solid #dde;
+            overflow: hidden;
+            z-index: 1; /* Keep the container above the video */
+        }
+
+        .bg1, .bg2 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .bg1 {
+            background-image: url('bg1.png');
+            z-index: 1;
+        }
+
+        .bg2 {
+            width: 70%; /* 70% size of bg1 */
+            height: 70%; /* 70% size of bg1 */
+            background-image: url('bg2.png');
+            z-index: 2;
+            transition: 1s;
+            top: 15%; /* Center vertically */
+            left: 15%; /* Center horizontally */
+            transform-origin: center;
+        }
+
+        .buttons {
+            margin-top: 2vh;
+            z-index: 1; /* Keep the buttons above the video */
+            display: flex;
+            gap: 2vw;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .buttons button {
+            text-transform: uppercase;
+            border: 0.2vw solid #fff;
+            font-weight: bold;
+            font-size: 3vw;
+            color: #fff;
+            width: 40vw;
+            max-width: 200px;
+            height: 8vh;
+            max-height: 50px;
+            font-family: sans-serif;
+            border-radius: 1vw;
+            cursor: pointer;
+            outline: none;
+            letter-spacing: 0.1vw;
+        }
+
+        #backward {
+            background-color: #ff9800; /* Orange */
+        }
+
+        #forward {
+            background-color: #4caf50; /* Green */
+        }
+
+        /* Speaker icon */
+        .speaker {
+            position: absolute;
+            top: 2vh;
+            left: 2vw;
+            font-size: 5vw;
+            color: white;
+            cursor: pointer;
+            z-index: 2; /* Keep it above all other elements */
+        }
+
+        /* Media queries for smaller screens */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 6vw;
+            }
+            .buttons button {
+                width: 80vw;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background video -->
+    <video id="bgvid" autoplay muted loop>
+        <source src="vid.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Speaker Icon for Sound Toggle -->
+    <div id="speaker-icon" class="speaker">🔊</div>
+
+    <h1>Math System</h1>
+    <div class="container">
+        <div class="bg1"></div> <!-- bg1 is stationary -->
+        <div class="bg2"></div> <!-- bg2 is smaller and will rotate -->
+    </div>
+    <div class="buttons">
+        <button id="backward">Backward</button>
+        <button id="forward">Forward</button>
+    </div>
+
+    <!-- Audio elements for button click sounds -->
+    <audio id="backward-sound" src="click.mp3"></audio>
+    <audio id="forward-sound" src="click.mp3"></audio>
+    
+    <!-- Background music -->
+    <audio id="bg-music" loop>
+        <source src="bg-music.mp3" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        let bg2 = document.querySelector(".bg2");
+        let forwardBtn = document.getElementById("forward");
+        let backwardBtn = document.getElementById("backward");
+        let currentRotation = 0;
+        const step = 18; // Each step is 18 degrees (360/20)
+
+        // Audio elements
+        let forwardSound = document.getElementById("forward-sound");
+        let backwardSound = document.getElementById("backward-sound");
+        let bgMusic = document.getElementById("bg-music");
+        let speakerIcon = document.getElementById("speaker-icon");
+
+        // Prompt user when the page loads
+        window.onload = function () {
+            alert("Click any button and the music will start to play.");
+        }
+
+        // Flag to check if the music has started playing
+        let hasInteracted = false;
+
+        // Button click event handlers
+        forwardBtn.onclick = function () {
+            playMusicOnInteraction();
+            currentRotation += step;
+            bg2.style.transform = "rotate(" + currentRotation + "deg)";
+            forwardSound.play(); // Play sound on forward button click
+        }
+
+        backwardBtn.onclick = function () {
+            playMusicOnInteraction();
+            currentRotation -= step;
+            bg2.style.transform = "rotate(" + currentRotation + "deg)";
+            backwardSound.play(); // Play sound on backward button click
+        }
+
+        // Mute/unmute background music, ensuring user interaction before playing
+        speakerIcon.onclick = function () {
+            if (!hasInteracted) {
+                playMusicOnInteraction(); // First interaction also unblocks audio
+            }
+            toggleMute();
+        }
+
+        // Function to handle background music play on first interaction
+        function playMusicOnInteraction() {
+            if (!hasInteracted) {
+                // Play music on first interaction
+                bgMusic.play().then(() => {
+                    hasInteracted = true; // Set the flag to true after the first play
+                }).catch((error) => {
+                    console.log("Error in playing background music:", error);
+                });
+            }
+        }
+
+        // Toggle mute state after the first interaction
+        function toggleMute() {
+            if (bgMusic.muted) {
+                bgMusic.muted = false;
+                speakerIcon.textContent = "🔊"; // Change icon to sound on
+            } else {
+                bgMusic.muted = true;
+                speakerIcon.textContent = "🔇"; // Change icon to sound off
+            }
+        }
+    </script>
+
+</body>
+</html>
