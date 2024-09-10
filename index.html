@@ -290,18 +290,93 @@
         <button id="forward">Maju</button>
     </div>
 
+    <!-- Audio elements for button click sounds -->
+    <audio id="backward-sound" src="click.mp3"></audio>
+    <audio id="forward-sound" src="click.mp3"></audio>
+    
+    <!-- Background music -->
+    <audio id="bg-music" loop>
+        <source src="bg-music.mp3" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+
     <script>
         let currentRotation = 0;
         const step = 18;
-
+    
         let mathQuestionElement = document.getElementById("math-question");
         let answerInput = document.getElementById("answer");
         let currentAnswer;
-
+    
+        // Audio elements
+        let forwardSound = document.getElementById("forward-sound");
+        let backwardSound = document.getElementById("backward-sound");
+        let bgMusic = document.getElementById("bg-music");
+        let speakerIcon = document.getElementById("speaker-icon");
+    
+        // Flag to check if the music has started playing
+        let hasInteracted = false;
+    
+        // Function to handle background music play on first interaction
+        function playMusicOnInteraction() {
+            if (!hasInteracted) {
+                // Play music on first interaction
+                bgMusic.play().then(() => {
+                    hasInteracted = true; // Set the flag to true after the first play
+                }).catch((error) => {
+                    console.log("Error in playing background music:", error);
+                });
+            }
+        }
+    
+        // Toggle mute state after the first interaction
+        function toggleMute() {
+            if (bgMusic.muted) {
+                bgMusic.muted = false;
+                speakerIcon.textContent = "🔊"; // Change icon to sound on
+            } else {
+                bgMusic.muted = true;
+                speakerIcon.textContent = "🔇"; // Change icon to sound off
+            }
+        }
+    
+        // Prompt user when the page loads
+        window.onload = function () {
+            alert("Klik mana-mana butang dan muzik akan mula dimainkan.");
+            generateRandomQuestion(); // Generate the initial math question
+        }
+    
+        // Button click event handlers
+        let forwardBtn = document.getElementById("forward");
+        let backwardBtn = document.getElementById("backward");
+        let bg2 = document.querySelector(".bg2");
+    
+        forwardBtn.onclick = function () {
+            playMusicOnInteraction(); // Ensure background music starts on first interaction
+            currentRotation += step;
+            bg2.style.transform = "rotate(" + currentRotation + "deg)";
+            forwardSound.play(); // Play sound on forward button click
+        }
+    
+        backwardBtn.onclick = function () {
+            playMusicOnInteraction(); // Ensure background music starts on first interaction
+            currentRotation -= step;
+            bg2.style.transform = "rotate(" + currentRotation + "deg)";
+            backwardSound.play(); // Play sound on backward button click
+        }
+    
+        // Mute/unmute background music, ensuring user interaction before playing
+        speakerIcon.onclick = function () {
+            if (!hasInteracted) {
+                playMusicOnInteraction(); // First interaction also unblocks audio
+            }
+            toggleMute();
+        }
+    
         function generateRandomQuestion() {
             let num1, num2;
             let isAddition = Math.random() > 0.5;
-
+    
             if (isAddition) {
                 num1 = Math.floor(Math.random() * 9) + 1;
                 num2 = Math.floor(Math.random() * (20 - num1)) + (num1 + 1);
@@ -313,22 +388,22 @@
                 mathQuestionElement.textContent = `Berapakah ${num1} - ${num2}?`;
                 currentAnswer = num1 - num2;
             }
-
+    
             while (currentAnswer < 1 || currentAnswer > 20) {
                 generateRandomQuestion();
             }
         }
-
+    
         function checkAnswer() {
             const userAnswer = parseInt(answerInput.value);
-
+    
             if (isNaN(userAnswer)) {
                 alert("Sila masukkan nombor yang sah.");
                 return;
             }
-
+    
             let checkIcon = document.querySelector(".check-icon");
-
+    
             if (userAnswer === currentAnswer) {
                 alert("Tahniah! Jawapan Betul.");
                 generateRandomQuestion();
@@ -339,25 +414,10 @@
                 alert("Jawapan Salah. Cuba lagi!");
             }
         }
-
-        window.onload = function () {
-            generateRandomQuestion();
-        }
-
-        let forwardBtn = document.getElementById("forward");
-        let backwardBtn = document.getElementById("backward");
-        let bg2 = document.querySelector(".bg2");
-
-        forwardBtn.onclick = function () {
-            currentRotation += step;
-            bg2.style.transform = "rotate(" + currentRotation + "deg)";
-        }
-
-        backwardBtn.onclick = function () {
-            currentRotation -= step;
-            bg2.style.transform = "rotate(" + currentRotation + "deg)";
-        }
+    
+        document.querySelector(".check-icon").onclick = checkAnswer;
+    
     </script>
-
+    
 </body>
 </html>
