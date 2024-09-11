@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Roda T20</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap">
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Varela+Round">
     <style>
         * {
             box-sizing: border-box;
@@ -21,6 +21,7 @@
             overflow: hidden;
             flex-direction: column;
             background-color: #34495e;
+            font-family: 'Varela Round', sans-serif;
         }
 
         video#bgvid {
@@ -35,7 +36,6 @@
 
         h1 {
             color: #fff;
-            font-family: 'Lucida Handwriting', sans-serif;
             font-weight: bold;
             text-align: center;
             font-size: calc(2vw + 2em); /* Responsive font size */
@@ -100,7 +100,6 @@
             max-width: 140px;
             height: 5.6vh;
             max-height: 35px;
-            font-family: sans-serif;
             border-radius: 1.4vw;
             cursor: pointer;
             outline: none;
@@ -141,7 +140,6 @@
 
         .math-question {
             color: #000;
-            font-family: 'Lucida Handwriting', sans-serif;
             font-weight: bold;
             font-size: calc(1.08vw + 0.72em); /* Responsive font size */
             margin: 0.72vw 0; /* Adjusted margin */
@@ -190,8 +188,8 @@
             }
 
             .question-box {
-                width: 50vw; /* Responsive width */
-                max-width: 80vw; /* Responsive max width */
+                width: 60vw; /* Responsive width */
+                max-width: 200vw; /* Responsive max width */
             }
 
             .math-question, .answer-input, .check-icon {
@@ -200,57 +198,60 @@
 
             .buttons button {
                 font-size: 4.05vw; /* Responsive font size */
-                width: 45vw; /* Responsive width */
+                width: 80vw; /* Responsive width */
             }
 
             .speaker {
-                font-size: 6.3vw; /* Responsive font size */
+                font-size: 2em; /* Responsive font size */
             }
         }
 
-        /* Media Query for screens between 601px and 1024px */
-        @media (min-width: 601px) and (max-width: 1024px) {
-            h1 {
-                font-size: 4vw; /* Adapt to medium screens */
-            }
-
-            .question-box {
-                width: 60vw; /* Adapt to medium screens */
-                max-width: 270px; /* Maximum width remains consistent */
-            }
-
-            .math-question, .answer-input, .check-icon {
-                font-size: 3vw; /* Adapt to medium screens */
-            }
-
-            .buttons button {
-                font-size: 3.5vw; /* Adapt to medium screens */
-                width: 40vw; /* Adapt to medium screens */
-            }
-
-            .speaker {
-                font-size: 5vw; /* Adapt to medium screens */
-            }
-        }
-
-        /* Media Query for larger screens (desktops) */
+        /* Media Query for screens wider than 1025px */
         @media (min-width: 1025px) {
+            .container {
+                transform: scale(1.5); /* Upscale the spin wheel by 50% */
+                position: relative; /* Allow absolute positioning of the question box */
+            }
+
+            .main-container {
+                display: flex;
+                justify-content: center;
+                align-items: flex-start; /* Align items to the top */
+                position: relative; /* For positioning the question box relative to the container */
+                gap: 3vw; /* Increase space between elements by 10% (was 2vw before) */
+            }
+
             h1 {
-                font-size: 2em; /* Adapt to larger screens */
+                margin-bottom: 4vw; /* Increase the space below h1 by 10% */
+                font-size: 3em;
+            }
+
+            .container {
+                margin-top: 3vw; /* Increase the space between h1 and the spin wheel by 10% */
+                margin-bottom: 3vw; /* Increase space between the spin wheel and buttons by 10% */
+            }
+
+            .buttons {
+                margin-top: 3vw; /* Increase space above the buttons by 10% */
+                gap: 3vw; /* Increase gap between buttons by 10% */
             }
 
             .question-box {
-                width: 40vw; /* Adapt to larger screens */
-                max-width: 300px; /* Maximum width remains consistent */
+                width: 20vw; /* Adjust width */
+                max-width: 300px;
+                position: absolute;
+                bottom: 20vh;
+                right: 10%; /* Adjust the position to the left by 10% */
             }
 
             .math-question, .answer-input, .check-icon {
-                font-size: 1.5em; /* Adapt to larger screens */
+                font-size: 1.2em; /* Adapt to larger screens */
             }
 
             .buttons button {
-                font-size: 1.2em; /* Adapt to larger screens */
-                width: 200px; /* Fixed width for larger screens */
+                font-size: 1.5em; 
+                width: 900px; 
+                height: 60px; 
             }
 
             .speaker {
